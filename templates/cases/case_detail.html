@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}{{ case.name }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="case-head">
+  <div class="ch-img">
+    <img src="{{ case.image_back }}" alt="{{ case.name }}">
+    {% if case.image_front %}<img class="front" src="{{ case.image_front }}" alt="">{% endif %}
+  </div>
+  <div class="ch-info">
+    <h1>{{ case.name }}</h1>
+    {% if case.is_limited %}<span class="tag limited">Ограниченная серия</span>{% endif %}
+    <div class="ch-price">{{ case.price }} NEON</div>
+    <button class="btn big" data-open-case="{{ case.slug }}">Открыть кейс</button>
+    <div class="muted small">Шансы честные: чем дороже предмет — тем реже выпадает.</div>
+    <div class="ch-extremes">
+      <div><span>Максимум</span><b>{{ best.name }} · {{ best.price|intcomma }}</b></div>
+      <div><span>Минимум</span><b>{{ worst.name }} · {{ worst.price|intcomma }}</b></div>
+    </div>
+  </div>
+</section>
+
+<section class="roulette-shell" id="roulette" hidden>
+  <div class="roulette-window">
+    <div class="roulette-track" id="rouletteTrack"></div>
+    <div class="roulette-pointer"></div>
+  </div>
+  <div class="roulette-result" id="rouletteResult" hidden>
+    <img id="resultImg" src="" alt="">
+    <div>
+      <div class="rr-name" id="resultName"></div>
+      <div class="rr-price" id="resultPrice"></div>
+    </div>
+  </div>
+</section>
+
+<section class="cat">
+  <div class="section-head">
+    <h2>Содержимое кейса</h2>
+    <div class="sorts">
+      <a class="sort {% if sort == 'default' %}on{% endif %}" href="?sort=default">По умолчанию</a>
+      <a class="sort {% if sort == 'asc' %}on{% endif %}" href="?sort=asc">Сначала дешёвые</a>
+      <a class="sort {% if sort == 'desc' %}on{% endif %}" href="?sort=desc">Сначала дорогие</a>
+    </div>
+  </div>
+
+  <table class="items-table">
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td class="it-img"><img src="{{ r.skin.image_url }}" alt="{{ r.skin.name }}" loading="lazy"></td>
+        <td class="it-name">
+          {{ r.skin.name }}
+          <span class="rarity r-{{ r.skin.rarity }}">{{ r.skin.rarity }}</span>
+        </td>
+        <td class="it-odds">{{ r.odds }}%</td>
+        <td class="it-price">{{ r.skin.price|intcomma }} NEON</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>window.CASE_SLUG = "{{ case.slug }}";</script>
+<script src="{% load static %}{% static 'js/roulette.js' %}"></script>
+{% endblock %}

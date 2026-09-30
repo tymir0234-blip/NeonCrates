@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <form method="post" class="panel auth-form">
+    {% csrf_token %}
+    <h1>Вход</h1>
+    {% if form.errors %}<div class="msg err">Неверный логин или пароль.</div>{% endif %}
+    <label class="field">Логин<input type="text" name="username" autofocus required></label>
+    <label class="field">Пароль<input type="password" name="password" required></label>
+    <input type="hidden" name="next" value="{{ next }}">
+    <button class="btn big">Войти</button>
+    <p class="muted small">Нет аккаунта? <a href="{% url 'register' %}">Регистрация</a> — 10 000 NEON в подарок.</p>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Контракты — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <h1>Контракты</h1>
+  <div class="ph-right muted">3 предмета → 1 новый</div>
+</section>
+
+{% if error %}<div class="msg err">{{ error }}</div>{% endif %}
+
+{% if result %}
+<div class="result-box">
+  <div class="rb-drop">
+    <img src="{{ result.image }}" alt="{{ result.name }}">
+    <div>
+      <div class="rr-name">{{ result.name }}</div>
+      <div class="rr-price">{{ result.price|intcomma }} NEON</div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+  <div class="grid-2">
+    <div class="panel">
+      <h3>Ваши предметы (нужно 3)</h3>
+      <div class="pick-list">
+        {% for r in own %}
+          <label class="pick">
+            <input type="checkbox" name="items" value="{{ r.id }}">
+            <img src="{{ r.skin.image_url }}" alt="" loading="lazy">
+            <span>{{ r.skin.name }}<b>{{ r.skin.price|intcomma }}</b></span>
+          </label>
+        {% empty %}
+          <div class="empty">Инвентарь пуст.</div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Кейс-контракт</h3>
+      <label class="field">Кейс
+        <select name="case">
+          {% for c in cases %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+        </select>
+      </label>
+      <button class="btn big">Создать контракт</button>
+      <p class="muted small">Шансы считаются по таблице кейса. Ставка равна цене трёх предметов.</p>
+    </div>
+  </div>
+</form>
+{% endblock %}

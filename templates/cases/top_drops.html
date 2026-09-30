@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Топ дропов — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-head"><h1>Топ дропов</h1></section>
+
+<table class="items-table">
+  <tbody>
+    {% for d in rows %}
+    <tr>
+      <td class="it-img"><img src="{{ d.skin.image_url }}" alt="{{ d.skin.name }}" loading="lazy"></td>
+      <td class="it-name">{{ d.skin.name }}{% if d.case %} <span class="muted">· {{ d.case.name }}</span>{% endif %}</td>
+      <td class="it-meta">{{ d.username|default:'бот' }} · {{ d.created_at|date:'d.m H:i' }}</td>
+      <td class="it-price">{{ d.price|intcomma }} NEON</td>
+    </tr>
+    {% empty %}
+    <tr><td class="empty">Дропов пока нет.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

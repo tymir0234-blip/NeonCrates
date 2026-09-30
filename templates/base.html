@@ -1,0 +1,76 @@
+{% load static %}<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+<meta name="description" content="{{ SITE_NAME }} — {{ SITE_TAGLINE }}">
+<link rel="preconnect" href="https://cdn6.gamecontent.io">
+<link rel="stylesheet" href="{% static 'css/neon.css' %}">
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<header class="topbar">
+  <a class="logo" href="{% url 'cases:home' %}">
+    <span class="logo-mark">◈</span>{{ SITE_NAME }}
+  </a>
+  <nav class="nav">
+    <a href="{% url 'cases:upgrade' %}">Апгрейд</a>
+    <a href="{% url 'cases:contract' %}">Контракты</a>
+    <a href="{% url 'cases:giveaways' %}">Розыгрыши</a>
+    <a href="{% url 'cases:tournaments' %}">Турниры</a>
+    <a href="{% url 'cases:top' %}">Топ дропов</a>
+    <a href="{% url 'cases:faq' %}">Вопросы</a>
+  </nav>
+  <div class="account">
+    <span class="balance" id="balanceBox">⬡ {{ balance }} NEON</span>
+    {% if user.is_authenticated %}
+      <a class="btn ghost sm" href="{% url 'cases:profile' %}">{{ user.username }}</a>
+      <a class="btn ghost sm" href="{% url 'cases:inventory' %}">Инвентарь</a>
+      <form method="post" action="{% url 'logout' %}" class="inline">
+        {% csrf_token %}<button class="btn ghost sm">Выйти</button>
+      </form>
+    {% else %}
+      <a class="btn ghost sm" href="{% url 'login' %}">Вход</a>
+      <a class="btn sm" href="{% url 'register' %}">Регистрация</a>
+    {% endif %}
+  </div>
+</header>
+
+{% if messages %}
+<div class="msgs">
+  {% for m in messages %}<div class="msg">{{ m }}</div>{% endfor %}
+</div>
+{% endif %}
+
+<main class="wrap">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="foot">
+  <div class="disclaimer">
+    <strong>{{ SITE_NAME }}</strong> — пародийный проект, не связанный с Valve Corporation.
+    Баланс вымышленный, реальные деньги не принимаются и не выводятся.
+  </div>
+  <div class="foot-links">
+    <a href="{% url 'cases:rule' 'terms' %}">Соглашение</a>
+    <a href="{% url 'cases:rule' 'aml' %}">AML</a>
+    <a href="{% url 'cases:rule' 'security' %}">Безопасность</a>
+    <a href="{% url 'cases:support' %}">Поддержка</a>
+    <a href="/admin/">Админка</a>
+  </div>
+</footer>
+
+<div id="dropToast" class="drop-toast" hidden>
+  <img id="dropToastImg" alt="">
+  <div>
+    <div class="dt-name" id="dropToastName"></div>
+    <div class="dt-price" id="dropToastPrice"></div>
+  </div>
+</div>
+
+<script src="{% static 'js/neon.js' %}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

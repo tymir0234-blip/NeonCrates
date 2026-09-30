@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Розыгрыши — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-head"><h1>Розыгрыши</h1></section>
+
+<div class="gift-grid">
+  {% for g in giveaways %}
+  <div class="gift-card">
+    {% if g.prize_skin %}
+      <img src="{{ g.prize_skin.image_url }}" alt="{{ g.prize }}" loading="lazy">
+    {% endif %}
+    <h3>{{ g.title }}</h3>
+    <div class="gc-prize">Приз: {{ g.prize }}</div>
+    {% if g.is_finished %}
+      <div class="gc-winner">Победитель: <b>{{ g.winner_name|default:g.winner.username }}</b></div>
+    {% else %}
+      <div class="gc-entry">Участие: {{ g.entry_price }} NEON</div>
+      <form method="post" action="{% url 'cases:giveaway_enter' g.pk %}">
+        {% csrf_token %}
+        <button class="btn">Участвовать</button>
+      </form>
+    {% endif %}
+  </div>
+  {% empty %}
+    <div class="empty">Розыгрышей пока нет.</div>
+  {% endfor %}
+</div>
+{% endblock %}

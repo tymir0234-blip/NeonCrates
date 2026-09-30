@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-left">
+    <h1>У НАС <span class="grad">ВЫИГРЫВАЮТ</span></h1>
+    <p class="muted">{{ SITE_TAGLINE }}</p>
+    <div class="hero-stats">
+      <div><b>{{ player_count }}</b><span>игроков онлайн</span></div>
+      <div><b>{{ total_drops|intcomma }}</b><span>дропов</span></div>
+    </div>
+  </div>
+  <form class="search" method="get">
+    <input type="text" name="q" value="{{ q }}" placeholder="Поиск кейса…">
+    <button class="btn">Найти</button>
+  </form>
+</section>
+
+<section class="strip-wrap">
+  <div class="section-head"><h3>У НАС ВЫИГРЫВАЮТ</h3></div>
+  <div class="drop-strip">
+    {% for d in drops %}
+      <a class="drop-chip" href="{% url 'cases:case' d.case.slug %}">
+        <img src="{{ d.skin.image_url }}" alt="{{ d.skin.name }}" loading="lazy">
+        <div class="dc-name">{{ d.skin.name|truncatechars:28 }}</div>
+        <div class="dc-price">{{ d.price }} NEON</div>
+      </a>
+    {% empty %}
+      <div class="empty">Пока нет дропов — открой первый кейс.</div>
+    {% endfor %}
+  </div>
+</section>
+
+{% for s in sections %}
+<section class="cat">
+  <div class="section-head"><h2>{{ s.label }}</h2></div>
+  <div class="case-grid">
+    {% for c in s.cases %}
+      <a class="case-card" href="{% url 'cases:case' c.slug %}">
+        <div class="cc-img">
+          <img src="{{ c.image_back }}" alt="{{ c.name }}" loading="lazy">
+          {% if c.image_front %}<img class="front" src="{{ c.image_front }}" alt="" loading="lazy">{% endif %}
+        </div>
+        <div class="cc-name">{{ c.name }}</div>
+        <div class="cc-count">{{ c.items.count }} предметов</div>
+        <div class="cc-price">{{ c.price }} NEON</div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% endfor %}
+
+{% if bonus_cases %}
+<section class="cat">
+  <div class="section-head"><h2>Бонусные кейсы</h2></div>
+  <div class="case-grid">
+    {% for c in bonus_cases %}
+      <a class="case-card" href="{% url 'cases:case' c.slug %}">
+        <div class="cc-img"><img src="{{ c.image_back }}" alt="{{ c.name }}" loading="lazy"></div>
+        <div class="cc-name">{{ c.name }}</div>
+        <div class="cc-price">{{ c.price }} NEON</div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

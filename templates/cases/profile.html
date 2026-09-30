@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Профиль — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <h1>{{ user.username }}</h1>
+  <div class="ph-right">Баланс: <b>{{ profile.balance|intcomma }} NEON</b></div>
+</section>
+
+<div class="grid-2">
+  <div class="panel">
+    <h3>Статистика</h3>
+    <ul class="stats">
+      <li><span>Зарегерстрирован</span><b>{{ profile.created_at|date:'d.m.Y' }}</b></li>
+      <li><span>Выиграно кейсов</span><b>{{ drops|length }}</b></li>
+      <li><span>Крупных дропов (1000+)</span><b>{{ wins }}</b></li>
+      <li><span>В игре</span><b>{{ profile.wagered|intcomma }} NEON</b></li>
+    </ul>
+  </div>
+
+  <div class="panel">
+    <h3>Промокод</h3>
+    <form method="post" action="{% url 'promo:redeem' %}" class="promo-form">
+      {% csrf_token %}
+      <input type="text" name="code" placeholder="NEON-START" required>
+      <input type="hidden" name="next" value="{% url 'cases:profile' %}">
+      <button class="btn">Активировать</button>
+    </form>
+    <p class="muted small">Доступные коды: NEON-START, GLOW-10, SHADOW-13, CRATE-500, FREE-SPIN.</p>
+  </div>
+</div>
+
+<section class="cat">
+  <div class="section-head"><h2>Последние дропы</h2></div>
+  <table class="items-table">
+    <tbody>
+      {% for d in drops %}
+      <tr>
+        <td class="it-img"><img src="{{ d.skin.image_url }}" alt="{{ d.skin.name }}" loading="lazy"></td>
+        <td class="it-name">{{ d.skin.name }}</td>
+        <td class="it-meta">{{ d.created_at|date:'d.m.Y H:i' }}</td>
+        <td class="it-price">{{ d.price|intcomma }} NEON</td>
+      </tr>
+      {% empty %}
+      <tr><td class="empty">Ещё нет дропов.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

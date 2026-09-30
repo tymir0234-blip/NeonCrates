@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Турниры — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-head"><h1>Турниры</h1></section>
+
+<div class="tour-grid">
+  {% for t in tournaments %}
+  <div class="tour-card">
+    <div class="tc-medal">◈</div>
+    <h3>{{ t.title }}</h3>
+    <ul class="stats">
+      <li><span>Призовой фонд</span><b>{{ t.prize_pool|intcomma }} NEON</b></li>
+      <li><span>Взнос</span><b>{{ t.entry_fee }} NEON</b></li>
+      <li><span>Мест</span><b>{{ t.max_players }}</b></li>
+    </ul>
+    {% if t.is_open %}<span class="tag">Набор открыт</span>
+    {% else %}<span class="tag off">Идёт</span>{% endif %}
+  </div>
+  {% empty %}
+    <div class="empty">Турниров пока нет.</div>
+  {% endfor %}
+</div>
+{% endblock %}

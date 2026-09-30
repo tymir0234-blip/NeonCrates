@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Инвентарь — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <h1>Инвентарь</h1>
+  <div class="ph-right">Суммарно: <b>{{ total|intcomma }} NEON</b></div>
+</section>
+
+<div class="inv-grid">
+  {% for r in rows %}
+    <div class="inv-card">
+      <img src="{{ r.skin.image_url }}" alt="{{ r.skin.name }}" loading="lazy">
+      <div class="inv-name">{{ r.skin.name }}</div>
+      <div class="inv-price">{{ r.skin.price|intcomma }} NEON</div>
+      <div class="inv-meta">{{ r.acquired_at|date:'d.m.Y H:i' }}</div>
+    </div>
+  {% empty %}
+    <div class="empty">Пусто. Откройте кейс или заберите предмет из розыгрыша.</div>
+  {% endfor %}
+</div>
+{% endblock %}

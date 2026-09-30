@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Регистрация — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <form method="post" class="panel auth-form">
+    {% csrf_token %}
+    <h1>Регистрация</h1>
+    {% if error %}<div class="msg err">{{ error }}</div>{% endif %}
+    <label class="field">Логин<input type="text" name="username" autofocus required></label>
+    <label class="field">Пароль<input type="password" name="password" required></label>
+    <button class="btn big">Создать аккаунт</button>
+    <p class="muted small">Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+  </form>
+</div>
+{% endblock %}

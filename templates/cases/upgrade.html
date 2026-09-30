@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Апгрейд — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <h1>Апгрейд</h1>
+  <div class="ph-right muted">Один скин → один скин дороже</div>
+</section>
+
+{% if error %}<div class="msg err">{{ error }}</div>{% endif %}
+
+<section class="upg-layout">
+  <form method="post" class="upg-form" id="upgForm">
+    {% csrf_token %}
+    <input type="hidden" name="item" id="upgItem" value="">
+
+    <div class="panel">
+      <h3>1. Предмет</h3>
+      {% if own %}
+        <div class="pick-list upg-picks">
+          {% for r in own %}
+            <label class="pick">
+              <input type="radio" name="item_choice" value="{{ r.id }}"
+                     data-price="{{ r.skin.price }}"
+                     data-name="{{ r.skin.name }}"
+                     data-image="{{ r.skin.image_url }}">
+              <img src="{{ r.skin.image_url }}" alt="" loading="lazy">
+              <span>{{ r.skin.name }}<b>{{ r.skin.price|intcomma }} NEON</b></span>
+            </label>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty">Инвентарь пуст — откройте кейс, чтобы получить предмет.</div>
+      {% endif %}
+    </div>
+
+    <div class="panel">
+      <h3>2. Кейс и коэффициент</h3>
+      <label class="field">Кейс
+        <select name="case" id="upgCase">
+          {% for c in cases %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+        </select>
+      </label>
+      <label class="field">Коэффициент
+        <select name="ratio" id="upgRatio">
+          {% for value, label in ratios %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+        </select>
+      </label>
+      <div class="upg-sum">
+        <div><span>Предмет</span><b id="sumItem">—</b></div>
+        <div><span>Порог результата</span><b id="sumThreshold">—</b></div>
+        <div><span>Вариантов</span><b id="sumCount">—</b></div>
+      </div>
+      <button class="btn big" id="upgSubmit" disabled>Улучшить</button>
+    </div>
+  </form>
+
+  <div class="upg-wheel-side">
+    <div class="panel wheel-panel">
+      <h3>Колесо выпадения</h3>
+      <div class="wheel-wrap" id="wheelWrap" hidden>
+        <div class="wheel-pointer"></div>
+        <canvas id="wheel" width="440" height="440"></canvas>
+        <div class="wheel-hub">
+          <img id="wheelHubImg" src="" alt="">
+          <span id="wheelHubText">—</span>
+        </div>
+      </div>
+      <div class="wheel-empty" id="wheelEmpty">Выберите предмет и кейс — шансы появятся здесь.</div>
+      <p class="muted small">Апгрейд гарантирует предмет от <b id="sumThresholdInline">порога</b>. Колесо показывает только допустимые предметы кейса: длина сектора равна реальному шансу.</p>
+    </div>
+  </div>
+</section>
+
+{% if result %}
+<section class="cat" id="upgResult">
+  <div class="section-head"><h2>Результат</h2></div>
+  <div class="upg-vs">
+    <div class="upg-side lost">
+      <img src="{{ result.input.image }}" alt="">
+      <div class="upg-cap">Было</div>
+      <div class="upg-name">{{ result.input.name }}</div>
+      <div class="upg-price">{{ result.input.price|intcomma }} NEON</div>
+    </div>
+    <div class="upg-arrow">→</div>
+    <div class="upg-side won">
+      <img src="{{ result.winner.image }}" alt="">
+      <div class="upg-cap">Стало</div>
+      <div class="upg-name">{{ result.winner.name }}</div>
+      <div class="upg-price">{{ result.winner.price|intcomma }} NEON</div>
+    </div>
+  </div>
+  <div class="upg-meta">
+    Коэффициент ×{{ result.ratio }} · минимум
+    <b>{{ result.wheel.threshold|intcomma }} NEON</b> ·
+    шанс этого предмета
+    <b>{{ result.winner.chance|floatformat:2 }}%</b> ·
+    <span class="win-text">апгрейд</span>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% load static %}{% static 'js/wheel.js' %}"></script>
+<script src="{% load static %}{% static 'js/upgrade.js' %}"></script>
+{% endblock %}
